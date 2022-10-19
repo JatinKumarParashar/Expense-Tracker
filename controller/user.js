@@ -36,13 +36,13 @@ exports.postLogin=(req,res,next)=>{
             res.status(201).json(users)
         }
         else{
-            res.status(501).json();
+            res.status(401).json();
         }
     })
     .catch(err=>{
        // alert('User does not exist')
 
         console.log(err);
-        res.status(500).json();
+        res.status(404).json();
     })
 }
