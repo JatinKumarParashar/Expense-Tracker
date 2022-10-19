@@ -25,3 +25,24 @@ exports.postSignUp = (req, res, next) => {
 
 
 }
+
+exports.postLogin=(req,res,next)=>{
+    const email=req.body.email;
+    const password=req.body.password;
+    user.findAll({where:{email:email}})
+    .then((users)=>{
+        if(users[0].dataValues.password==password){
+
+            res.status(201).json(users)
+        }
+        else{
+            res.status(501).json();
+        }
+    })
+    .catch(err=>{
+       // alert('User does not exist')
+
+        console.log(err);
+        res.status(500).json();
+    })
+}
