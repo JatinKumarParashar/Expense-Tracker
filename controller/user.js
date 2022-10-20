@@ -2,6 +2,15 @@ const user = require('../models/user');
 const { json } = require('body-parser');
 const { where } = require('sequelize');
 const bcrypt=require('bcrypt');
+const jwt=require('jsonwebtoken');
+
+
+
+function generateAccessToken(id){
+    return jwt.sign({
+        user:id
+    },'JatinKumarParshar');
+}
 
 
 
@@ -39,7 +48,8 @@ exports.postLogin=(req,res,next)=>{
 
             if(result==true){
     
-                res.status(201).json(users)
+                res.status(201).json({token:generateAccessToken(users[0].dataValues.id)})
+
             }
             else{
                 res.status(401).json();

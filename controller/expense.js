@@ -1,16 +1,19 @@
 const { json } = require('body-parser');
 const { where } = require('sequelize');
+const Expence = require('../models/expense');
 const expence = require('../models/expense');
 
 exports.postExpense=async (req,res,next)=>{
    const ammount=req.body.amm;
    const description=req.body.des;
    const category=req.body.cat;
+   const userId=req.user.dataValues.id;
    console.log('123',ammount,description,category);
   const data= await expence.create({
         ammount:ammount,
         description:description,
-        category:category
+        category:category,
+        userId:userId
       })
 
       res.status(201).json(data);
@@ -18,9 +21,12 @@ exports.postExpense=async (req,res,next)=>{
 
 
 exports.getExpense=(req,res,next)=>{
-  expence.findAll().then(row=>{
-      res.json(row);
-  })
+    console.log('req.user',req.user.dataValues.id);
+ Expence.findAll({where:{userId:req.user.dataValues.id}}).then(result=>{
+    res.status(201).json(result);
+ }).catch(err=>{
+    console.log(err);
+ })
   }
 
 

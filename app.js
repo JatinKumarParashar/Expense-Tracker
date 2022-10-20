@@ -15,11 +15,16 @@ app.use(cors());
 const signUpRoutes = require('./routes/signUp');
 const expenseRoutes = require('./routes/Expense');
 
-
+const User=require('./models/user');
+const Expense=require('./models/expense');
 
 
 app.use('/user', signUpRoutes);
 app.use('/expense',expenseRoutes);
+
+User.hasMany(Expense);
+Expense.belongsTo(User);
+
 
 sequelize.sync().then(()=>{
     app.listen(4000, () => {
