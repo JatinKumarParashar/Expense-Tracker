@@ -21,13 +21,14 @@ exports.postExpense=async (req,res,next)=>{
 
 
 exports.getExpense=(req,res,next)=>{
-    console.log('req.user',req.user.dataValues.id);
+
+    console.log('req.user',req.user);
  Expence.findAll({where:{userId:req.user.dataValues.id}}).then(result=>{
     res.status(201).json(result);
  }).catch(err=>{
     console.log(err);
  })
-  }
+}
 
 
   exports.deleteExpense=(req,res,next)=>{
