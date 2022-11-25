@@ -1,15 +1,15 @@
-const user = require('../models/user');
+const User = require('../models/user');
 const { json } = require('body-parser');
 const { where } = require('sequelize');
-const bcrypt=require('bcrypt');
-const jwt=require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 
-function generateAccessToken(id){
+function generateAccessToken(id) {
     return jwt.sign({
-        user:id
-    },'JatinKumarParshar');
+        user: id
+    }, 'JatinKumarParshar');
 }
 
 
@@ -20,46 +20,51 @@ exports.postSignUp = (req, res, next) => {
     const username = req.body.user;
     const email = req.body.email;
     const password = req.body.pass;
-    console.log('123', username, password, email);
-    bcrypt.hash(password,10,async(err,hash)=>{
-        user.create({
-            username: username,
-            email: email,
-            password: hash
-        }).then((data) => {
-            res.status(201).json(data);
-        })
-        .catch(err => {
-            console.log(err);
-            console.log('Or you have entered existing email');
-        })
+    const expenses = {
+        expenses: []
+    };
+   // console.log('123', username, password, email);
+    bcrypt.hash(password, 10, async (err, hash) => {
+        const user = new User(username, email, hash, 0, expenses, null);
+        user.save()
+            .then((data) => {
+                res.status(201).json(data);
+            })
+            .catch(err => {
+                console.log(err);
+                console.log('Or you have entered existing email');
+            })
     })
 
 
 
 }
 
-exports.postLogin=(req,res,next)=>{
-    const email=req.body.email;
-    const password=req.body.password;
-    user.findAll({where:{email:email}})
-    .then((users)=>{
-        bcrypt.compare(password,users[0].dataValues.password,(err,result)=>{
-
-            if(result==true){
-    
-                res.status(201).json({token:generateAccessToken(users[0].dataValues.id)})
-
-            }
-            else{
-                res.status(401).json();
-            }
+exports.postLogin = (req, res, next) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    User.findByEmailId(email)
+        .then((user) => {
+            console.log('controllers/user.js/post login line 48',user)
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (result == true) {
+                    console.log('is premium from login >>>>', user._id.toString());
+                    if (user.isPremium) {
+                        res.status(201).json({ result: user, token: generateAccessToken(user._id.toString()) })
+                    }
+                    else {
+                        res.status(200).json({ result: user, token: generateAccessToken(user._id.toString()) })
+                    }
+                }
+                else {
+                    res.status(401).json();
+                }
+            })
         })
-    })
-    .catch(err=>{
-       // alert('User does not exist')
+        .catch(err => {
+            // alert('User does not exist')
 
-        console.log(err);
-        res.status(404).json();
-    })
+            console.log(err);
+            res.status(404).json();
+        })
 }
