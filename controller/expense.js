@@ -164,8 +164,8 @@ exports.deleteExpense = (req, res, next) => {
 
 async function uploadTOS3(data,fileName){
   const BUCKET_NAME='expensetracker1';
-  const ACCESS_KEY_ID='AKIA3RJDBF47LK3HDCAT';
-  const SECRETE_KEY_ID='fYSZUNOPRYx/D3TtB+FISEeA+pjsZ3cNekhLZ/gq';
+  const ACCESS_KEY_ID='this is access key id of ima user ';
+  const SECRETE_KEY_ID='this is secrete key id of ima user';
 
   let s3bucket=new AWS.S3({
     accessKeyId:ACCESS_KEY_ID,
